@@ -18,6 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveExpensesButton = document.getElementById('saveExpenses'); // 필요경비 저장 버튼
     const totalExpensesDisplay = document.getElementById('totalExpensesDisplay'); // 필요경비 표시
 
+     let isAcquisitionModalOpen = false; // 상태 변수
+    let isExpensesModalOpen = false; // 상태 변수
+ 
     // 숫자 입력에 콤마 추가
     document.addEventListener('input', (event) => {
         const target = event.target;

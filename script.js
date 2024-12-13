@@ -97,14 +97,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 취득가액 저장 (취득 경비 포함)
-    saveAcquisitionButton.addEventListener('click', () => {
-        const acquisitionPrice = parseInt(document.getElementById('acquisitionPrice').value.replace(/,/g, '') || '0', 10);
-        const acquisitionCost = parseInt(document.getElementById('acquisitionCost').value.replace(/,/g, '') || '0', 10);
-        const totalAcquisition = acquisitionPrice + acquisitionCost;
-        totalAcquisitionDisplay.textContent = `총 취득가액: ${totalAcquisition.toLocaleString()} 원`;
-        closeModal(acquisitionModal);
-        isAcquisitionModalOpen = false;
-    });
+   saveAcquisitionButton.addEventListener('click', () => {
+    const acquisitionPrice = parseInt(document.getElementById('acquisitionPrice').value.replace(/,/g, '') || '0', 10);
+    const acquisitionCostField = document.getElementById('acquisitionCost');
+    const acquisitionCost = acquisitionCostField
+        ? parseInt(acquisitionCostField.value.replace(/,/g, '') || '0', 10)
+        : 0;
+    const totalAcquisition = acquisitionPrice + acquisitionCost;
+    totalAcquisitionDisplay.textContent = `총 취득가액: ${totalAcquisition.toLocaleString()} 원`;
+    closeModal(acquisitionModal);
+    isAcquisitionModalOpen = false;
+});
 
     // 필요경비 모달 열기/닫기
     toggleExpensesButton.addEventListener('click', (event) => {

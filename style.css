@@ -67,12 +67,14 @@ button#toggleExpensesButton {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 300px;
+    width: 90%; /* 모달 창 너비를 화면의 90%로 설정 */
+    max-width: 600px; /* 최대 너비 제한 */
     background: #fff;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     z-index: 1000;
+    box-sizing: border-box;
 }
 
 .modal h3 {
@@ -82,18 +84,27 @@ button#toggleExpensesButton {
 
 .modal input {
     width: 100%;
-    padding: 8px;
+    padding: 10px;
     margin-bottom: 15px;
     border: 1px solid #ddd;
     border-radius: 5px;
+    box-sizing: border-box;
 }
 
 .modal button {
     margin-right: 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 .modal button:last-child {
     margin-right: 0;
+    background-color: #ccc;
+    color: black;
 }
 
 /* 모달 오버레이 */
@@ -106,4 +117,15 @@ button#toggleExpensesButton {
     height: 100%;
     background: rgba(0, 0, 0, 0.4);
     z-index: 999;
+}
+
+/* 결과 섹션 스타일 */
+#result {
+    margin-top: 20px;
+    background: #f1f1f1;
+    padding: 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    line-height: 1.6;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

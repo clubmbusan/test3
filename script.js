@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveExpensesButton = document.getElementById('saveExpenses'); // 필요경비 저장 버튼
     const totalExpensesDisplay = document.getElementById('totalExpensesDisplay'); // 필요경비 표시
 
-    // 상태 변수 추가
+    // 상태 변수
     let isAcquisitionModalOpen = false; // 취득가액 모달 상태
     let isExpensesModalOpen = false; // 필요경비 모달 상태
 
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
-
+    
     // 계산 버튼 클릭 이벤트
     calculateButton.addEventListener('click', () => {
         const acquisitionPrice = parseInt(totalAcquisitionDisplay.textContent.replace(/[^0-9]/g, '') || '0', 10); // 취득가액

@@ -42,18 +42,20 @@
                 <input type="text" id="transferPrice" placeholder="금액 입력">
             </div>
 
-            <!-- 취득가액 버튼 -->
-            <button id="toggleAcquisitionButton" type="button">취득가액 입력</button>
-            <div id="acquisitionModal" class="modal">
-                <h3>취득가액 입력</h3>
-                <label for="acquisitionDate">취득일:</label>
-                <input type="date" id="acquisitionDate"><br>
-                <label for="acquisitionPrice">취득가액 (원):</label>
-                <input type="text" id="acquisitionPrice" placeholder="금액 입력"><br>
-                <button id="saveAcquisition" type="button">저장</button>
-                <button id="closeAcquisitionModal" type="button">닫기</button>
-            </div>
-            <p id="totalAcquisitionDisplay">총 취득가액: 0 원</p>
+           <!-- 취득가액 버튼 -->
+<button id="toggleAcquisitionButton" type="button">취득가액 입력</button>
+<div id="acquisitionModal" class="modal">
+    <h3>취득가액 입력</h3>
+    <label for="acquisitionDate">취득일:</label>
+    <input type="date" id="acquisitionDate"><br>
+    <label for="acquisitionPrice">취득가액 (원):</label>
+    <input type="text" id="acquisitionPrice" placeholder="금액 입력"><br>
+    <label for="acquisitionCost">취득 경비 (원):</label>
+    <input type="text" id="acquisitionCost" placeholder="경비 입력"><br>
+    <button id="saveAcquisition" type="button">저장</button>
+    <button id="closeAcquisitionModal" type="button">닫기</button>
+</div>
+<p id="totalAcquisitionDisplay">총 취득가액: 0 원</p>
 
             <!-- 필요경비 버튼 -->
             <button id="toggleExpensesButton" type="button">필요경비 입력</button>

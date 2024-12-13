@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 숫자 입력에 콤마 추가
     document.addEventListener('input', (event) => {
         const target = event.target;
-        if (['acquisitionPrice', 'transferPrice'].includes(target.id) || target.closest('#expensesModal')) {
+        if (['acquisitionPrice', 'acquisitionCost', 'transferPrice'].includes(target.id) || target.closest('#expensesModal')) {
             const rawValue = target.value.replace(/[^0-9]/g, ''); // 숫자만 추출
             target.value = rawValue ? parseInt(rawValue, 10).toLocaleString() : ''; // 콤마 추가
         }
@@ -96,10 +96,12 @@ document.addEventListener('DOMContentLoaded', () => {
         isAcquisitionModalOpen = false;
     });
 
-    // 취득가액 저장
+    // 취득가액 저장 (취득 경비 포함)
     saveAcquisitionButton.addEventListener('click', () => {
         const acquisitionPrice = parseInt(document.getElementById('acquisitionPrice').value.replace(/,/g, '') || '0', 10);
-        totalAcquisitionDisplay.textContent = `총 취득가액: ${acquisitionPrice.toLocaleString()} 원`;
+        const acquisitionCost = parseInt(document.getElementById('acquisitionCost').value.replace(/,/g, '') || '0', 10);
+        const totalAcquisition = acquisitionPrice + acquisitionCost;
+        totalAcquisitionDisplay.textContent = `총 취득가액: ${totalAcquisition.toLocaleString()} 원`;
         closeModal(acquisitionModal);
         isAcquisitionModalOpen = false;
     });
@@ -144,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
-    
+
     // 계산 버튼 클릭 이벤트
     calculateButton.addEventListener('click', () => {
         const acquisitionPrice = parseInt(totalAcquisitionDisplay.textContent.replace(/[^0-9]/g, '') || '0', 10); // 취득가액
@@ -153,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 양도차익 계산
         const profit = transferPrice - acquisitionPrice - expenses;
-
+       
         // 기본 세율 및 중과세
         let taxRate = 0;
         let surcharge = 0;

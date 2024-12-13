@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
     acquisitionDateInput.addEventListener('change', calculateHoldingYears);
     transferDateInput.addEventListener('change', calculateHoldingYears);
 
-    // 모달 열기/닫기 함수
+        // 모달 열기/닫기 공통 함수
     const openModal = (modal) => {
         modal.style.display = 'block';
     };
@@ -89,33 +89,32 @@ document.addEventListener('DOMContentLoaded', () => {
         isAcquisitionModalOpen = !isAcquisitionModalOpen;
     });
 
-    // 취득가액 모달 닫기
     closeAcquisitionModal.addEventListener('click', (event) => {
         event.preventDefault();
         closeModal(acquisitionModal);
         isAcquisitionModalOpen = false;
     });
 
-    // 취득가액 저장 (취득 경비 포함)
-  saveAcquisitionButton.addEventListener('click', () => {
-    // 취득가액과 취득 경비 입력 필드 가져오기
-    const acquisitionPriceElement = document.getElementById('acquisitionPrice');
-    const acquisitionCostElement = document.getElementById('acquisitionCost');
+    // 취득가액 저장
+    saveAcquisitionButton.addEventListener('click', () => {
+        // 취득가액과 취득 경비 입력 필드 가져오기
+        const acquisitionPriceElement = document.getElementById('acquisitionPrice');
+        const acquisitionCostElement = document.getElementById('acquisitionCost');
 
-    // 값 읽기, 없으면 0으로 처리
-    const acquisitionPrice = acquisitionPriceElement ? parseInt(acquisitionPriceElement.value.replace(/,/g, '') || '0', 10) : 0;
-    const acquisitionCost = acquisitionCostElement ? parseInt(acquisitionCostElement.value.replace(/,/g, '') || '0', 10) : 0;
+        // 값 읽기, 없으면 0으로 처리
+        const acquisitionPrice = acquisitionPriceElement ? parseInt(acquisitionPriceElement.value.replace(/,/g, '') || '0', 10) : 0;
+        const acquisitionCost = acquisitionCostElement ? parseInt(acquisitionCostElement.value.replace(/,/g, '') || '0', 10) : 0;
 
-    // 총 취득가액 계산
-    const totalAcquisition = acquisitionPrice + acquisitionCost;
+        // 총 취득가액 계산
+        const totalAcquisition = acquisitionPrice + acquisitionCost;
 
-    // 결과 표시
-    totalAcquisitionDisplay.textContent = `총 취득가액: ${totalAcquisition.toLocaleString()} 원`;
+        // 결과 표시
+        totalAcquisitionDisplay.textContent = `총 취득가액: ${totalAcquisition.toLocaleString()} 원`;
 
-    // 모달 닫기
-    closeModal(acquisitionModal);
-    isAcquisitionModalOpen = false;
-});
+        // 모달 닫기
+        closeModal(acquisitionModal);
+        isAcquisitionModalOpen = false;
+    });
 
     // 필요경비 모달 열기/닫기
     toggleExpensesButton.addEventListener('click', (event) => {
@@ -128,7 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
         isExpensesModalOpen = !isExpensesModalOpen;
     });
 
-    // 필요경비 모달 닫기
     closeExpensesModal.addEventListener('click', (event) => {
         event.preventDefault();
         closeModal(expensesModal);
@@ -157,17 +155,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
-
+    
     // 계산 버튼 클릭 이벤트
     calculateButton.addEventListener('click', () => {
         const acquisitionPrice = parseInt(totalAcquisitionDisplay.textContent.replace(/[^0-9]/g, '') || '0', 10); // 취득가액
         const expenses = parseInt(totalExpensesDisplay.textContent.replace(/[^0-9]/g, '') || '0', 10); // 필요경비
-        const transferPrice = parseInt(document.getElementById('transferPrice').value.replace(/,/g, '') || '0', 10); // 양도가액
+        const transferPrice = parseInt(document.getElementById('transferPrice')?.value.replace(/,/g, '') || '0', 10); // 양도가액
+        const holdingYears = parseFloat(holdingYearsDisplay.value) || 0;
 
-        // 양도차익 계산
         const profit = transferPrice - acquisitionPrice - expenses;
-       
-        // 기본 세율 및 중과세
+
         let taxRate = 0;
         let surcharge = 0;
         let longTermDeductionRate = 0;
@@ -177,33 +174,29 @@ document.addEventListener('DOMContentLoaded', () => {
             const singleHouseExemption = document.getElementById('singleHouseExemption').value === 'yes';
 
             if (singleHouseExemption) {
-                longTermDeductionRate = holdingYearsDisplay.value >= 2 ? Math.min(holdingYearsDisplay.value * 0.04, 0.8) : 0;
+                longTermDeductionRate = holdingYears >= 2 ? Math.min(holdingYears * 0.04, 0.8) : 0;
             } else {
-                longTermDeductionRate = holdingYearsDisplay.value >= 3 ? Math.min(holdingYearsDisplay.value * 0.02, 0.3) : 0;
+                longTermDeductionRate = holdingYears >= 3 ? Math.min(holdingYears * 0.02, 0.3) : 0;
             }
 
             taxRate = regulatedArea ? 0.2 : 0.1;
             surcharge = regulatedArea ? 0.1 : 0;
         } else if (propertyTypeSelect.value === 'landForest') {
-            longTermDeductionRate = holdingYearsDisplay.value >= 3 ? Math.min(holdingYearsDisplay.value * 0.03, 0.3) : 0;
+            longTermDeductionRate = holdingYears >= 3 ? Math.min(holdingYears * 0.03, 0.3) : 0;
             taxRate = 0.15;
         } else if (propertyTypeSelect.value === 'commercial') {
-            longTermDeductionRate = holdingYearsDisplay.value >= 3 ? Math.min(holdingYearsDisplay.value * 0.03, 0.3) : 0;
+            longTermDeductionRate = holdingYears >= 3 ? Math.min(holdingYears * 0.03, 0.3) : 0;
             taxRate = 0.2;
         }
 
-        // 과세표준 계산 (장기보유특별공제 반영)
         const taxableProfit = profit * (1 - longTermDeductionRate);
 
-        // 양도소득세 계산
         const tax = Math.floor(taxableProfit * taxRate + taxableProfit * surcharge);
 
-        // 부가세 계산
-        const educationTax = Math.floor(tax * 0.1); // 지방교육세 (10%)
-        const ruralTax = Math.floor(tax * 0.2); // 농어촌특별세 (20%)
+        const educationTax = Math.floor(tax * 0.1);
+        const ruralTax = Math.floor(tax * 0.2);
         const totalTax = tax + educationTax + ruralTax;
 
-        // 결과 출력
         document.getElementById('result').innerHTML = `
             <h3>계산 결과</h3>
             <p>양도차익: ${profit.toLocaleString()} 원</p>
@@ -217,4 +210,3 @@ document.addEventListener('DOMContentLoaded', () => {
             <p><strong>총 세금: ${totalTax.toLocaleString()} 원</strong></p>
         `;
     });
-});

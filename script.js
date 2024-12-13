@@ -155,15 +155,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
-    // 계산 버튼 클릭 이벤트
+       // 계산 버튼 클릭 이벤트
     calculateButton.addEventListener('click', () => {
         const acquisitionPrice = parseInt(totalAcquisitionDisplay.textContent.replace(/[^0-9]/g, '') || '0', 10); // 취득가액
         const expenses = parseInt(totalExpensesDisplay.textContent.replace(/[^0-9]/g, '') || '0', 10); // 필요경비
         const transferPrice = parseInt(document.getElementById('transferPrice')?.value.replace(/,/g, '') || '0', 10); // 양도가액
-        const holdingYears = parseFloat(holdingYearsDisplay.value) || 0;
+        const holdingYears = parseFloat(holdingYearsDisplay?.value || '0'); // 보유 기간
 
+        // 양도차익 계산
         const profit = transferPrice - acquisitionPrice - expenses;
 
+        // 기본 세율 및 중과세
         let taxRate = 0;
         let surcharge = 0;
         let longTermDeductionRate = 0;
@@ -188,14 +190,18 @@ document.addEventListener('DOMContentLoaded', () => {
             taxRate = 0.2;
         }
 
+        // 과세표준 계산 (장기보유특별공제 반영)
         const taxableProfit = profit * (1 - longTermDeductionRate);
 
+        // 양도소득세 계산
         const tax = Math.floor(taxableProfit * taxRate + taxableProfit * surcharge);
 
-        const educationTax = Math.floor(tax * 0.1);
-        const ruralTax = Math.floor(tax * 0.2);
+        // 부가세 계산
+        const educationTax = Math.floor(tax * 0.1); // 지방교육세 (10%)
+        const ruralTax = Math.floor(tax * 0.2); // 농어촌특별세 (20%)
         const totalTax = tax + educationTax + ruralTax;
 
+        // 결과 출력
         document.getElementById('result').innerHTML = `
             <h3>계산 결과</h3>
             <p>양도차익: ${profit.toLocaleString()} 원</p>
@@ -210,3 +216,4 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     });
 });
+ 

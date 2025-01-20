@@ -7,16 +7,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const transferDateInput = document.getElementById('transferDate'); // 양도일 입력
     const holdingYearsDisplay = document.getElementById('holdingYearsDisplay'); // 보유 기간 표시
     const calculateButton = document.getElementById('calculateButton'); // 계산 버튼
+    
     const toggleAcquisitionButton = document.getElementById('toggleAcquisitionButton'); // 취득가액 버튼
     const acquisitionModal = document.getElementById('acquisitionModal'); // 취득가액 모달
     const closeAcquisitionModal = document.getElementById('closeAcquisitionModal'); // 취득가액 모달 닫기 버튼
     const saveAcquisitionButton = document.getElementById('saveAcquisition'); // 취득가액 저장 버튼
     const totalAcquisitionDisplay = document.getElementById('totalAcquisitionDisplay'); // 취득가액 표시
+   
     const toggleExpensesButton = document.getElementById('toggleExpensesButton'); // 필요경비 버튼
     const expensesModal = document.getElementById('expensesModal'); // 필요경비 모달
     const closeExpensesModal = document.getElementById('closeExpensesModal'); // 필요경비 모달 닫기 버튼
     const saveExpensesButton = document.getElementById('saveExpenses'); // 필요경비 저장 버튼
     const totalExpensesDisplay = document.getElementById('totalExpensesDisplay'); // 필요경비 표시
+  
     const exemptionSection = document.getElementById("exemptionSection"); // 감면율 선택 필드 추가
 
     // 상태 변수
@@ -98,8 +101,8 @@ const numericFields = [
     acquisitionDateInput.addEventListener('change', calculateHoldingYears);
     transferDateInput.addEventListener('change', calculateHoldingYears);
    }); 
-   
-  // 모달 입력 필드를 초기화하는 공통 함수
+ 
+// 모달 입력 필드를 초기화하는 공통 함수
 const resetFields = (modalId) => {
     document.querySelectorAll(`#${modalId} input[type="text"]`).forEach((input) => {
         input.value = ''; // 입력 필드 값 초기화
@@ -134,7 +137,10 @@ const closeModal = (modal, modalId) => {
     });
 
     // 취득가액 저장
-   saveAcquisitionButton.addEventListener('click', () => {
+   if (saveAcquisitionButton) {
+        saveAcquisitionButton.addEventListener('click', () => {
+             console.log("✅ 취득가액 저장 버튼 클릭됨!");
+
     // 취득가액 입력 필드 가져오기
     const acquisitionPriceElement = document.getElementById('acquisitionPrice');
 
@@ -159,8 +165,11 @@ const closeModal = (modal, modalId) => {
     closeModal(acquisitionModal);
     isAcquisitionModalOpen = false;
 });
-
-    // 필요경비 모달 열기/닫기
+} else {
+    console.error("❌ saveAcquisitionButton 요소를 찾을 수 없습니다.");
+}
+    
+// 필요경비 모달 열기/닫기
 toggleExpensesButton.addEventListener('click', (event) => {
     event.preventDefault();
     openModal(expensesModal);

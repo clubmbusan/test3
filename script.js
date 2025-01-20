@@ -97,6 +97,7 @@ const numericFields = [
 
     acquisitionDateInput.addEventListener('change', calculateHoldingYears);
     transferDateInput.addEventListener('change', calculateHoldingYears);
+   }); 
    
   // 모달 입력 필드를 초기화하는 공통 함수
 const resetFields = (modalId) => {

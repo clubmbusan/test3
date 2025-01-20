@@ -311,19 +311,21 @@ const taxBrackets = [
 // ✅ 과세표준 설정 (기본공제 후)
 const taxableIncome = 229500000; // 사용자 입력값 (과세표준)
 
-// ✅ 양도소득세 계산 (누진세율 적용)
+// ✅ 양도소득세 계산 (누진세율 단계별 적용)
 let totalTax = 0;
-let remainingIncome = taxableIncome; // ✅ 원본을 유지하면서 계산하기 위해 새로운 변수 사용
+let remainingIncome = taxableIncome; // ✅ 원본 유지
 
-for (let i = taxBrackets.length - 1; i > 0; i--) {
-    if (remainingIncome > taxBrackets[i].limit) {
-        let taxableAmount = remainingIncome - taxBrackets[i].limit;
+for (let i = 0; i < taxBrackets.length - 1; i++) {
+    if (taxableIncome > taxBrackets[i].limit) {
+        let nextLimit = taxBrackets[i + 1].limit;
+        let taxableAmount = Math.min(taxableIncome, nextLimit) - taxBrackets[i].limit;
         totalTax += taxableAmount * taxBrackets[i].rate;
-        remainingIncome = taxBrackets[i].limit; // ✅ 원래 limit으로 설정 (이후 단계 계산)
+    } else {
+        break; // ✅ 현재 구간이 끝나면 반복문 종료
     }
 }
 
-// ✅ 현재 과세표준에 해당하는 구간의 누진공제 적용
+// ✅ 현재 과세표준이 속하는 구간의 누진공제 적용
 let applicableDeduction = 0;
 for (let i = 0; i < taxBrackets.length; i++) {
     if (taxableIncome > taxBrackets[i].limit) {
@@ -331,16 +333,24 @@ for (let i = 0; i < taxBrackets.length; i++) {
     }
 }
 
-// ✅ 최종 세액 계산 (누진공제 차감)
+// ✅ 최종 세액 계산 (누진공제 적용)
 totalTax -= applicableDeduction;
 
 // ✅ 부가세 적용 전 순수한 양도소득세 저장 (rawTax)
-const rawTax = totalTax; // ✅ 순수 양도소득세 저장
-    
+const rawTax = totalTax;
+
 // ✅ 부가세 계산
 const educationTax = Math.floor(rawTax * 0.1); // 지방교육세 (10%)
 const ruralTax = Math.floor(rawTax * 0.2); // 농어촌특별세 (20%)
-totalTax += educationTax + ruralTax; //✅ 기존 totalTax 값 업데이트 (재선언 X)
+
+// ✅ 최종 납부 세금 계산 (부가세 적용)
+totalTax += educationTax + ruralTax;
+
+// ✅ 최종 결과 출력
+console.log(`순수 양도소득세 (rawTax): ${rawTax.toLocaleString()} 원`);
+console.log(`지방교육세: ${educationTax.toLocaleString()} 원`);
+console.log(`농어촌특별세: ${ruralTax.toLocaleString()} 원`);
+console.log(`최종 납부 세금 (totalTax): ${totalTax.toLocaleString()} 원`);
     
 // 결과 출력
 document.getElementById('result').innerHTML = `

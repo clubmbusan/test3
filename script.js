@@ -329,10 +329,10 @@ const taxBrackets = [
     rawTax -= applicableDeduction;
 
     // 부가세 계산
-    const educationTax = Math.floor(rawTax * 0.1); // 지방교육세 (10%)
-    const ruralTax = Math.floor(rawTax * 0.2); // 농어촌특별세 (20%)
+     const educationTax = Math.floor(rawTax * 0.1); // 지방교육세 (10%)
+     const ruralTax = Math.floor((rawTax - applicableDeduction) * 0.2); // 농어촌특별세 (감면 금액의 20%)
     const totalTax = rawTax + educationTax + ruralTax;
-  
+    
     // 결과 출력
 document.getElementById('result').innerHTML = `
     <h3>계산 결과</h3>

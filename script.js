@@ -374,5 +374,5 @@ if (!resultContainer) {
         <p>농어촌특별세: ${result?.ruralTax?.toLocaleString() || "계산 오류"} 원</p>
         <p><strong>총 세금: ${result?.totalTax?.toLocaleString() || "계산 오류"} 원</strong></p>
     `;
-  }
+  
 }); // DOMContentLoaded 끝

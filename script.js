@@ -356,11 +356,18 @@ const result = calculateCapitalGainsTaxAndSurtaxes(taxableProfitAfterDeduction, 
 console.log("result:", result); // 결과 디버깅
 
 // ✅ HTML 요소 확인 (결과 출력)
-const resultContainer = document.getElementById('result');
-if (!resultContainer) {
-    console.error("결과를 출력할 'result' 요소가 존재하지 않습니다.");
-} else {
-    document.getElementById('result').innerHTML = `
+    const resultContainer = document.getElementById('result');
+    if (!resultContainer) {
+        console.error("결과를 출력할 'result' 요소가 존재하지 않습니다.");
+        return; // ⬅ HTML 요소가 없으면 실행 중단
+    }
+
+    if (!result) {
+        console.error("calculateCapitalGainsTaxAndSurtaxes() 함수가 올바르게 실행되지 않았습니다.");
+        return; // ⬅ 계산이 실패하면 실행 중단
+    }
+
+    resultContainer.innerHTML = `
     
         <h3>계산 결과</h3>
         <p>보유 기간: ${holdingYearsInt} 년</p>

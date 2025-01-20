@@ -52,20 +52,28 @@ const numericFields = [
     }
 });
 
-    // 부동산 유형에 따라 필드 표시/숨김
+   // 부동산 유형에 따라 필드 표시/숨김
     const updateFieldsByPropertyType = () => {
         const propertyType = propertyTypeSelect.value;
+
         if (propertyType === 'house') {
             regulatedAreaField.style.display = 'block';
             singleHouseExemptionField.style.display = 'block';
+            exemptionSection.style.display = 'none'; // 주택 선택 시 감면율 필드 숨김
+        } else if (propertyType === 'commercial') {
+            regulatedAreaField.style.display = 'none';
+            singleHouseExemptionField.style.display = 'none';
+            exemptionSection.style.display = 'block'; // '토지/건물' 선택 시 감면율 필드 표시
         } else {
             regulatedAreaField.style.display = 'none';
             singleHouseExemptionField.style.display = 'none';
+            exemptionSection.style.display = 'none'; // 다른 유형 선택 시 감면율 필드 숨김
         }
     };
 
     propertyTypeSelect.addEventListener('change', updateFieldsByPropertyType);
     updateFieldsByPropertyType();
+});
 
     // 보유 기간 자동 계산
     const calculateHoldingYears = () => {

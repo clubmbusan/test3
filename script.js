@@ -373,5 +373,5 @@ document.getElementById('result').innerHTML = `
     <p><strong>총 세금: ${totalTax.toLocaleString()} 원</strong></p>
         
     `;
-    });
+  
   }); // DOMContentLoaded 끝

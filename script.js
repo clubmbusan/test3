@@ -361,6 +361,7 @@ if (!resultContainer) {
     console.error("결과를 출력할 'result' 요소가 존재하지 않습니다.");
 } else {
     document.getElementById('result').innerHTML = `
+    
         <h3>계산 결과</h3>
         <p>보유 기간: ${holdingYearsInt} 년</p>
         <p>장기보유특별공제율: ${(longTermDeductionRate * 100).toFixed(1)}%</p>
@@ -374,5 +375,4 @@ if (!resultContainer) {
         <p>농어촌특별세: ${result?.ruralTax?.toLocaleString() || "계산 오류"} 원</p>
         <p><strong>총 세금: ${result?.totalTax?.toLocaleString() || "계산 오류"} 원</strong></p>
     `;
-  });
-}); // DOMContentLoaded 끝
+  }); // DOMContentLoaded 끝

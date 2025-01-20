@@ -308,47 +308,30 @@ const taxBrackets = [
     { limit: Infinity, rate: 0.45, deduction: 65940000 }
 ];
 
-// ✅ 과세표준 설정 (기본공제 후)
-const taxableIncome = 229500000; // 사용자 입력값 (과세표준)
+// 양도소득세 계산
+let rawTax = 0; // 양도소득세
+let remainingProfit = taxableProfitAfterDeduction; // 남은 과세표준
 
-// ✅ 양도소득세 계산 (누진세율 단계별 적용)
-let totalTax = 0;
-let remainingIncome = taxableIncome; // ✅ 원본 유지
-
-  for (let i = taxBrackets.length - 1; i > 0; i--) {
-    if (remainingIncome > taxBrackets[i].limit) {
-        let taxableAmount = remainingIncome - taxBrackets[i].limit;
-        totalTax += taxableAmount * taxBrackets[i].rate; // ✅ 각 구간별 세율 적용
-        remainingIncome = taxBrackets[i].limit; // ✅ 다음 단계로 이동
-    }
-}  
-
-// ✅ 현재 과세표준이 속하는 구간의 누진공제 적용
-let applicableDeduction = 0;
 for (let i = 0; i < taxBrackets.length; i++) {
-    if (taxableIncome > taxBrackets[i].limit) {
-        applicableDeduction = taxBrackets[i].deduction;
-    }
+    const bracket = taxBrackets[i];
+    const previousLimit = i === 0 ? 0 : taxBrackets[i - 1].limit; // 이전 구간의 상한
+
+    // 현재 구간에서 남은 금액 계산
+    if (remainingProfit <= 0) break; // 남은 금액이 없으면 종료
+    const taxableAmount = Math.min(bracket.limit - previousLimit, remainingProfit); // 현재 구간에서 과세할 금액
+    const taxForBracket = taxableAmount * bracket.rate; // 현재 구간의 세금 계산
+    rawTax += taxForBracket; // 세금 누적
+    remainingProfit -= taxableAmount; // 남은 금액 갱신
 }
 
-// ✅ 최종 세액 계산 (누진공제 적용)
-totalTax -= applicableDeduction;
+// 누진공제 적용
+const applicableDeduction = taxBrackets.find(bracket => taxableProfitAfterDeduction <= bracket.limit)?.deduction || 0;
+rawTax -= applicableDeduction;
 
-// ✅ 부가세 적용 전 순수한 양도소득세 저장 (rawTax)
-const rawTax = totalTax;
-
-// ✅ 부가세 계산
+// 부가세 계산 (소수점 절사 처리 추가)
 const educationTax = Math.floor(rawTax * 0.1); // 지방교육세 (10%)
 const ruralTax = Math.floor(rawTax * 0.2); // 농어촌특별세 (20%)
-
-// ✅ 최종 납부 세금 계산 (부가세 적용)
-totalTax += educationTax + ruralTax;
-
-// ✅ 최종 결과 출력
-console.log(`순수 양도소득세 (rawTax): ${rawTax.toLocaleString()} 원`);
-console.log(`지방교육세: ${educationTax.toLocaleString()} 원`);
-console.log(`농어촌특별세: ${ruralTax.toLocaleString()} 원`);
-console.log(`최종 납부 세금 (totalTax): ${totalTax.toLocaleString()} 원`);
+const totalTax = Math.floor(rawTax + educationTax + ruralTax); // 총 세금 절사 처리
     
 // 결과 출력
 document.getElementById('result').innerHTML = `

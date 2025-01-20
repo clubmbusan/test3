@@ -309,27 +309,29 @@ const taxBrackets = [
 ];
 
 // ✅ 과세표준 설정 (기본공제 후)
-let taxableIncome = 229500000; // 사용자 입력값 (과세표준)
+const taxableIncome = 229500000; // 사용자 입력값 (과세표준)
 
-// ✅ 양도소득세 계산 (단계별 세율 적용)
+// ✅ 양도소득세 계산 (누진세율 적용)
 let totalTax = 0;
+let remainingIncome = taxableIncome; // ✅ 원본을 유지하면서 계산하기 위해 새로운 변수 사용
 
 for (let i = taxBrackets.length - 1; i > 0; i--) {
-    if (taxableIncome > taxBrackets[i].limit) {
-        let taxableAmount = taxableIncome - taxBrackets[i].limit;
+    if (remainingIncome > taxBrackets[i].limit) {
+        let taxableAmount = remainingIncome - taxBrackets[i].limit;
         totalTax += taxableAmount * taxBrackets[i].rate;
-        taxableIncome = taxBrackets[i].limit; // 다음 단계로 이동
+        remainingIncome = taxBrackets[i].limit; // ✅ 원래 limit으로 설정 (이후 단계 계산)
     }
 }
 
-// ✅ 누진공제 적용 (현재 과세표준이 속하는 구간)
+// ✅ 현재 과세표준에 해당하는 구간의 누진공제 적용
 let applicableDeduction = 0;
 for (let i = 0; i < taxBrackets.length; i++) {
-    if (229500000 > taxBrackets[i].limit) {
+    if (taxableIncome > taxBrackets[i].limit) {
         applicableDeduction = taxBrackets[i].deduction;
     }
 }
 
+// ✅ 최종 세액 계산 (누진공제 차감)
 totalTax -= applicableDeduction;
     
 // 부가세 계산

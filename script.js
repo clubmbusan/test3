@@ -331,13 +331,19 @@ const taxBrackets = [
     // 부가세 계산
     const educationTax = Math.floor(rawTax * 0.1); // 지방교육세 (10%)
 
+     // 감면율이 선택되지 않았을 경우 기본값 0 설정
+     const selectedExemptionRate = typeof selectedExemptionRate !== 'undefined' ? selectedExemptionRate : 0;
+
+     const educationTax = Math.floor(rawTax * 0.1);
      let ruralTax = 0; // 기본값 0으로 설정
-     if (selectedExemptionRate > 0) { // 감면이 선택된 경우만 적용
+
+     // 감면이 선택된 경우만 농특세 적용
+     if (selectedExemptionRate > 0) { 
          const taxReduction = rawTax * (selectedExemptionRate / 100); // 감면 금액 계산
-         ruralTax = Math.floor(taxReduction * 0.2); // 감면액의 20% 농특세 적용
+         ruralTax = Math.floor(taxReduction * 0.2); // 감면액의 20% 농어촌특별세 적용
      }
 
-     const totalTax = rawTax + educationTax + ruralTax;
+     const totalTax = rawTax + educationTax + ruralTax;  
     
     // 결과 출력
 document.getElementById('result').innerHTML = `

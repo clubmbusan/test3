@@ -333,10 +333,13 @@ for (let i = 0; i < taxBrackets.length; i++) {
 
 // ✅ 최종 세액 계산 (누진공제 차감)
 totalTax -= applicableDeduction;
+
+// ✅ 부가세 적용 전 순수한 양도소득세 저장 (rawTax)
+const rawTax = totalTax; // ✅ 순수 양도소득세 저장
     
-// 부가세 계산
-const educationTax = Math.floor(totalTax * 0.1); // 지방교육세 (10%)
-const ruralTax = Math.floor(totalTax * 0.2); // 농어촌특별세 (20%)
+// ✅ 부가세 계산
+const educationTax = Math.floor(rawTax * 0.1); // 지방교육세 (10%)
+const ruralTax = Math.floor(rawTax * 0.2); // 농어촌특별세 (20%)
 totalTax += educationTax + ruralTax; //✅ 기존 totalTax 값 업데이트 (재선언 X)
     
 // 결과 출력

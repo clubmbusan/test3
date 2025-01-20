@@ -315,15 +315,13 @@ const taxableIncome = 229500000; // 사용자 입력값 (과세표준)
 let totalTax = 0;
 let remainingIncome = taxableIncome; // ✅ 원본 유지
 
-for (let i = 0; i < taxBrackets.length - 1; i++) {
-    if (taxableIncome > taxBrackets[i].limit) {
-        let nextLimit = taxBrackets[i + 1].limit;
-        let taxableAmount = Math.min(taxableIncome, nextLimit) - taxBrackets[i].limit;
-        totalTax += taxableAmount * taxBrackets[i].rate;
-    } else {
-        break; // ✅ 현재 구간이 끝나면 반복문 종료
+  for (let i = taxBrackets.length - 1; i > 0; i--) {
+    if (remainingIncome > taxBrackets[i].limit) {
+        let taxableAmount = remainingIncome - taxBrackets[i].limit;
+        totalTax += taxableAmount * taxBrackets[i].rate; // ✅ 각 구간별 세율 적용
+        remainingIncome = taxBrackets[i].limit; // ✅ 다음 단계로 이동
     }
-}
+}  
 
 // ✅ 현재 과세표준이 속하는 구간의 누진공제 적용
 let applicableDeduction = 0;

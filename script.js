@@ -347,20 +347,32 @@ function calculateCapitalGainsTaxAndSurtaxes(taxableProfit, exemptedTax = 0) {
     };
 }
 
- // 결과 출력
- document.getElementById('result').innerHTML = `
-     <h3>계산 결과</h3>
-     <p>보유 기간: ${holdingYearsInt} 년</p>
-     <p>장기보유특별공제율: ${(longTermDeductionRate * 100).toFixed(1)}%</p>
-     <p>양도차익: ${profit.toLocaleString()} 원</p>
-     <p>장기보유특별공제 금액: ${longTermDeductionAmount.toLocaleString()} 원</p>
-     <p>과세표준 (기본공제 전): ${taxableProfit.toLocaleString()} 원</p>
-     <p>기본공제: ${basicDeduction.toLocaleString()} 원</p>
-     <p>과세표준 (기본공제 후): ${taxableProfitAfterDeduction.toLocaleString()} 원</p>
-     <p>양도소득세: ${result.capitalGainsTax.toLocaleString()} 원</p>
-     <p>지방교육세: ${result.educationTax.toLocaleString()} 원</p>
-     <p>농어촌특별세: ${result.ruralTax.toLocaleString()} 원</p>
-     <p><strong>총 세금: ${result.totalTax.toLocaleString()} 원</strong></p>
-   `;
-  });   
+// ✅ 과세표준과 감면세액이 정상적으로 계산되었는지 확인
+console.log("taxableProfitAfterDeduction:", taxableProfitAfterDeduction);
+console.log("exemptedTax:", exemptedTax);
+
+// ✅ 양도소득세 계산 함수 실행
+const result = calculateCapitalGainsTaxAndSurtaxes(taxableProfitAfterDeduction, exemptedTax);
+console.log("result:", result); // 결과 디버깅
+
+// ✅ HTML 요소 확인 (결과 출력)
+const resultContainer = document.getElementById('result');
+if (!resultContainer) {
+    console.error("결과를 출력할 'result' 요소가 존재하지 않습니다.");
+} else {
+    document.getElementById('result').innerHTML = `
+        <h3>계산 결과</h3>
+        <p>보유 기간: ${holdingYearsInt} 년</p>
+        <p>장기보유특별공제율: ${(longTermDeductionRate * 100).toFixed(1)}%</p>
+        <p>양도차익: ${profit.toLocaleString()} 원</p>
+        <p>장기보유특별공제 금액: ${longTermDeductionAmount.toLocaleString()} 원</p>
+        <p>과세표준 (기본공제 전): ${taxableProfit.toLocaleString()} 원</p>
+        <p>기본공제: ${basicDeduction.toLocaleString()} 원</p>
+        <p>과세표준 (기본공제 후): ${taxableProfitAfterDeduction.toLocaleString()} 원</p>
+        <p>양도소득세: ${result?.capitalGainsTax?.toLocaleString() || "계산 오류"} 원</p>
+        <p>지방교육세: ${result?.educationTax?.toLocaleString() || "계산 오류"} 원</p>
+        <p>농어촌특별세: ${result?.ruralTax?.toLocaleString() || "계산 오류"} 원</p>
+        <p><strong>총 세금: ${result?.totalTax?.toLocaleString() || "계산 오류"} 원</strong></p>
+    `;
+  }
 }); // DOMContentLoaded 끝

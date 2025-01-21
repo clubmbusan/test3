@@ -7,19 +7,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const transferDateInput = document.getElementById('transferDate'); // 양도일 입력
     const holdingYearsDisplay = document.getElementById('holdingYearsDisplay'); // 보유 기간 표시
     const calculateButton = document.getElementById('calculateButton'); // 계산 버튼
-    
     const toggleAcquisitionButton = document.getElementById('toggleAcquisitionButton'); // 취득가액 버튼
     const acquisitionModal = document.getElementById('acquisitionModal'); // 취득가액 모달
     const closeAcquisitionModal = document.getElementById('closeAcquisitionModal'); // 취득가액 모달 닫기 버튼
     const saveAcquisitionButton = document.getElementById('saveAcquisition'); // 취득가액 저장 버튼
     const totalAcquisitionDisplay = document.getElementById('totalAcquisitionDisplay'); // 취득가액 표시
-   
     const toggleExpensesButton = document.getElementById('toggleExpensesButton'); // 필요경비 버튼
     const expensesModal = document.getElementById('expensesModal'); // 필요경비 모달
     const closeExpensesModal = document.getElementById('closeExpensesModal'); // 필요경비 모달 닫기 버튼
     const saveExpensesButton = document.getElementById('saveExpenses'); // 필요경비 저장 버튼
     const totalExpensesDisplay = document.getElementById('totalExpensesDisplay'); // 필요경비 표시
-  
     const exemptionSection = document.getElementById("exemptionSection"); // 감면율 선택 필드 추가
 
     // 상태 변수
@@ -56,27 +53,32 @@ const numericFields = [
     }
 });
 
-   // 부동산 유형에 따라 필드 표시/숨김
+    // 부동산 유형에 따라 필드 표시/숨김
     const updateFieldsByPropertyType = () => {
         const propertyType = propertyTypeSelect.value;
-
+        
+        // 주택 선택 시 조정대상지역 & 1세대 1주택 여부 표시
         if (propertyType === 'house') {
             regulatedAreaField.style.display = 'block';
             singleHouseExemptionField.style.display = 'block';
-            exemptionSection.style.display = 'none'; // 주택 선택 시 감면율 필드 숨김
-        } else if (propertyType === 'commercial') {
-            regulatedAreaField.style.display = 'none';
-            singleHouseExemptionField.style.display = 'none';
-            exemptionSection.style.display = 'block'; // '토지/건물' 선택 시 감면율 필드 표시
         } else {
             regulatedAreaField.style.display = 'none';
             singleHouseExemptionField.style.display = 'none';
-            exemptionSection.style.display = 'none'; // 다른 유형 선택 시 감면율 필드 숨김
         }
+
+        // ✅ "토지/건물"을 선택하면 감면율 선택 필드(`exemptionSection`) 표시, 아니면 숨김
+        if (exemptionSection) { // 감면율 선택 필드가 존재할 경우만 실행
+        if (propertyType === 'commercial') { 
+            exemptionSection.style.display = 'block'; // 감면율 필드 보이기
+        } else {
+            exemptionSection.style.display = 'none'; // 감면율 필드 숨기기
+        }
+      } 
     };
 
+    // 부동산 유형 변경 시 감면율 필드 표시/숨김 반영
     propertyTypeSelect.addEventListener('change', updateFieldsByPropertyType);
-    updateFieldsByPropertyType();
+    updateFieldsByPropertyType(); // 페이지 로드 시 초기 상태 반영
 
     // 보유 기간 자동 계산
     const calculateHoldingYears = () => {
@@ -100,9 +102,8 @@ const numericFields = [
 
     acquisitionDateInput.addEventListener('change', calculateHoldingYears);
     transferDateInput.addEventListener('change', calculateHoldingYears);
-   }); 
- 
-// 모달 입력 필드를 초기화하는 공통 함수
+   
+  // 모달 입력 필드를 초기화하는 공통 함수
 const resetFields = (modalId) => {
     document.querySelectorAll(`#${modalId} input[type="text"]`).forEach((input) => {
         input.value = ''; // 입력 필드 값 초기화
@@ -137,10 +138,7 @@ const closeModal = (modal, modalId) => {
     });
 
     // 취득가액 저장
-   if (saveAcquisitionButton) {
-        saveAcquisitionButton.addEventListener('click', () => {
-             console.log("✅ 취득가액 저장 버튼 클릭됨!");
-
+   saveAcquisitionButton.addEventListener('click', () => {
     // 취득가액 입력 필드 가져오기
     const acquisitionPriceElement = document.getElementById('acquisitionPrice');
 
@@ -165,11 +163,8 @@ const closeModal = (modal, modalId) => {
     closeModal(acquisitionModal);
     isAcquisitionModalOpen = false;
 });
-} else {
-    console.error("❌ saveAcquisitionButton 요소를 찾을 수 없습니다.");
-}
-    
-// 필요경비 모달 열기/닫기
+
+    // 필요경비 모달 열기/닫기
 toggleExpensesButton.addEventListener('click', (event) => {
     event.preventDefault();
     openModal(expensesModal);
@@ -325,16 +320,7 @@ const taxBrackets = [
     { limit: 1000000000, rate: 0.42, deduction: 35940000 },
     { limit: Infinity, rate: 0.45, deduction: 65940000 }
 ];
-
-    document.getElementById("calculateButton").addEventListener("click", function () {
-    // ✅ 감면율 선택 드롭다운 요소 가져오기
-    const exemptionRateElement = document.getElementById("exemptionRate");
-
-    // ✅ 감면율 값 가져오기 (선택되지 않았으면 기본값 `0` 설정)
-    const selectedExemptionRate = exemptionRateElement ? parseFloat(exemptionRateElement.value) || 0 : 0;
-
-    console.log("선택된 감면율:", selectedExemptionRate); // 디버깅 로그 추가
-
+            
  // 양도소득세 계산
     let rawTax = 0; // 양도소득세
     let remainingProfit = taxableProfitAfterDeduction; // 남은 과세표준
@@ -356,17 +342,16 @@ const taxBrackets = [
     rawTax -= applicableDeduction;
 
     // 부가세 계산
-  const educationTax = Math.floor(rawTax * 0.1); // 지방교육세 (10%)
-  let ruralTax = 0; // 기본값 0 설정
+    const educationTax = Math.floor(rawTax * 0.1); // 지방교육세 (10%)
 
-  // 감면이 선택된 경우만 농특세 적용
-  if (selectedExemptionRate > 0) { 
-      const taxReduction = rawTax * (selectedExemptionRate / 100); // 감면 금액 계산
-      ruralTax = Math.floor(taxReduction * 0.2); // 감면액의 20% 농어촌특별세 적용
-  }
+     let ruralTax = 0; // 기본값 0으로 설정
+     if (selectedExemptionRate > 0) { // 감면이 선택된 경우만 적용
+         const taxReduction = rawTax * (selectedExemptionRate / 100); // 감면 금액 계산
+         ruralTax = Math.floor(taxReduction * 0.2); // 감면액의 20% 농특세 적용
+     }
 
-  const totalTax = rawTax + educationTax + ruralTax;
-     
+     const totalTax = rawTax + educationTax + ruralTax;
+    
     // 결과 출력
 document.getElementById('result').innerHTML = `
     <h3>계산 결과</h3>
@@ -380,9 +365,9 @@ document.getElementById('result').innerHTML = `
     <p>양도소득세: ${rawTax.toLocaleString()} 원</p>
     <p>지방교육세: ${educationTax.toLocaleString()} 원</p>
     <p>감면율: ${selectedExemptionRate}%</p>
-    p>농어촌특별세: ${ruralTax.toLocaleString()} 원</p>
+    <p>농어촌특별세: ${ruralTax.toLocaleString()} 원</p>
     <p><strong>총 세금: ${totalTax.toLocaleString()} 원</strong></p>
         
     `;
-  });
-}); // DOMContentLoaded 끝
+    });
+  }); // DOMContentLoaded 끝
